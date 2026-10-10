@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduSource | Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#0B0D12] text-white min-h-screen">
+<div class="max-w-7xl mx-auto px-5 py-8">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+    <div>
+      <a href="index.html" class="text-purple-300 hover:text-white text-sm"><i class="fas fa-arrow-left mr-2"></i>Back to EduSource</a>
+      <h1 class="text-4xl font-bold mt-3">Dashboard</h1>
+      <p class="text-gray-400 mt-1">Manage books and study manuals on this device.</p>
+    </div>
+    <button id="resetBtn" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-red-500/20 border border-white/10">Reset Library</button>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+    <div class="bg-[#12141C] border border-white/10 rounded-2xl p-5"><p class="text-gray-400">Total resources</p><p id="totalCount" class="text-3xl font-bold mt-2">0</p></div>
+    <div class="bg-[#12141C] border border-white/10 rounded-2xl p-5"><p class="text-gray-400">Books</p><p id="bookCount" class="text-3xl font-bold mt-2">0</p></div>
+    <div class="bg-[#12141C] border border-white/10 rounded-2xl p-5"><p class="text-gray-400">Manuals</p><p id="manualCount" class="text-3xl font-bold mt-2">0</p></div>
+  </div>
+
+  <div class="bg-[#12141C] border border-white/10 rounded-2xl p-5 mb-8">
+    <div class="flex flex-col md:flex-row gap-3">
+      <input id="title" class="flex-1 bg-[#1E2029] border border-white/10 rounded-xl p-3" placeholder="Book or manual title">
+      <input id="description" class="flex-1 bg-[#1E2029] border border-white/10 rounded-xl p-3" placeholder="Author / description">
+      <input id="image" class="flex-1 bg-[#1E2029] border border-white/10 rounded-xl p-3" placeholder="Cover image URL (optional)">
+    </div>
+    <div class="flex flex-col md:flex-row gap-3 mt-3">
+      <input id="link" class="flex-1 bg-[#1E2029] border border-white/10 rounded-xl p-3" placeholder="PDF / Read Online link">
+      <select id="type" class="bg-[#1E2029] border border-white/10 rounded-xl p-3 md:w-52"><option value="textbook">Book</option><option value="manual">Manual</option></select>
+      <button id="addBtn" class="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 font-semibold"><i class="fas fa-plus mr-2"></i>Add Resource</button>
+    </div>
+    <p id="message" class="text-sm text-gray-400 mt-3"></p>
+
+    <div class="mt-6 pt-5 border-t border-white/10">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-3">
+        <div>
+          <h3 class="font-semibold text-lg">Quick Paste</h3>
+          <p class="text-xs text-gray-400">Copy-paste one or more resources. One line = one resource.</p>
+        </div>
+        <span class="text-xs text-purple-300">Title | Author/description | PDF/Read link | Cover URL</span>
+      </div>
+      <textarea id="pasteBox" rows="5" class="w-full bg-[#1E2029] border border-white/10 rounded-xl p-3" placeholder="Introduction to Biology | John Smith | https://example.com/biology.pdf | https://example.com/cover.jpg
+Physics Basics | A. Khan | https://example.com/physics.pdf
+
+You can also paste just a PDF/online link on a line."></textarea>
+      <div class="flex flex-col sm:flex-row gap-3 mt-3">
+        <select id="pasteType" class="bg-[#1E2029] border border-white/10 rounded-xl p-3 sm:w-48"><option value="textbook">Add as Book</option><option value="manual">Add as Manual</option></select>
+        <button id="pasteBtn" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-semibold"><i class="fas fa-paste mr-2"></i>Add Pasted Resources</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-[#12141C] border border-white/10 rounded-2xl overflow-hidden">
+    <div class="p-5 border-b border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <h2 class="text-xl font-semibold">Your Library</h2>
+      <input id="search" class="bg-[#1E2029] border border-white/10 rounded-xl p-3 md:w-80" placeholder="Search resources...">
+    </div>
+    <div id="list" class="divide-y divide-white/10"></div>
+  </div>
+</div>
+<script>
+const defaultsBooks=[
+{id:'book-1',name:'Introduction to Computer Science',description:'Foundations of computer science',image:'https://placehold.co/600x400/1E1F29/9B87F5?text=Computer+Science',link:'#'},
+{id:'book-2',name:'Calculus: Early Transcendentals',description:'Calculus textbook',image:'https://placehold.co/600x400/1E1F29/9B87F5?text=Calculus',link:'#'},
+{id:'book-3',name:'Principles of Economics',description:'Economics textbook',image:'https://placehold.co/600x400/1E1F29/9B87F5?text=Economics',link:'#'}];
+const defaultsManuals=[
+{id:'manual-1',name:'Python Programming Guide',description:'Python programming manual',image:'https://placehold.co/600x400/1E1F29/9B87F5?text=Python',link:'#'},
+{id:'manual-2',name:'Academic Writing Handbook',description:'Academic writing guide',image:'https://placehold.co/600x400/1E1F29/9B87F5?text=Writing',link:'#'},
+{id:'manual-3',name:'Exam Preparation Toolkit',description:'Study and exam preparation',image:'https://placehold.co/600x400/1E1F29/9B87F5?text=Exam+Prep',link:'#'}];
+function getData(){return {books:JSON.parse(localStorage.getItem('edusource_textbooks')||JSON.stringify(defaultsBooks)),manuals:JSON.parse(localStorage.getItem('edusource_manuals')||JSON.stringify(defaultsManuals))}}
+function save(d){localStorage.setItem('edusource_textbooks',JSON.stringify(d.books));localStorage.setItem('edusource_manuals',JSON.stringify(d.manuals))}
+function render(){const d=getData(), all=[...d.books.map(x=>({...x,type:'book'})),...d.manuals.map(x=>({...x,type:'manual'}))];document.getElementById('totalCount').textContent=all.length;document.getElementById('bookCount').textContent=d.books.length;document.getElementById('manualCount').textContent=d.manuals.length;const q=document.getElementById('search').value.toLowerCase();const shown=all.filter(x=>(x.name+' '+x.description).toLowerCase().includes(q));document.getElementById('list').innerHTML=shown.length?shown.map(x=>`<div class="p-4 flex flex-col md:flex-row md:items-center gap-4"><img src="${x.image||'https://placehold.co/100x70'}" class="w-24 h-16 object-cover rounded-lg"><div class="flex-1"><p class="font-semibold">${escapeHtml(x.name)}</p><p class="text-sm text-gray-400">${escapeHtml(x.description||'')} · ${x.type==='book'?'Book':'Manual'}</p></div><a href="${x.link||'#'}" target="_blank" class="px-3 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm">Read / Download</a><button onclick="removeItem('${x.id}','${x.type}')" class="px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-300 text-sm">Delete</button></div>`).join(''):'<p class="p-6 text-gray-400">No resources found.</p>'}
+function escapeHtml(v){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function removeItem(id,type){const d=getData();if(type==='book')d.books=d.books.filter(x=>x.id!==id);else d.manuals=d.manuals.filter(x=>x.id!==id);save(d);render()}
+document.getElementById('addBtn').onclick=()=>{const name=document.getElementById('title').value.trim();if(!name){document.getElementById('message').textContent='Enter a title first.';return}const d=getData(), type=document.getElementById('type').value, item={id:Date.now().toString(),name,description:document.getElementById('description').value.trim(),image:document.getElementById('image').value.trim()||'https://placehold.co/600x400/1E1F29/9B87F5?text=EduSource',link:document.getElementById('link').value.trim()||'#'};type==='book'?d.books.push(item):d.manuals.push(item);save(d);['title','description','image','link'].forEach(id=>document.getElementById(id).value='');document.getElementById('message').textContent='Resource added successfully.';render()};
+document.getElementById('pasteBtn').onclick=()=>{
+  const raw=document.getElementById('pasteBox').value.trim();
+  const msg=document.getElementById('message');
+  if(!raw){msg.textContent='Paste a book/manual or a link first.';return}
+  const type=document.getElementById('pasteType').value;
+  const d=getData();
+  const target=type==='book'?d.books:d.manuals;
+  let added=0;
+  raw.split(/\n+/).map(x=>x.trim()).filter(Boolean).forEach(line=>{
+    let parts=line.split('|').map(x=>x.trim()).filter(Boolean);
+    if(parts.length===1 && /^https?:\/\//i.test(parts[0])){
+      const url=parts[0];
+      const clean=url.split('?')[0].split('#')[0];
+      const file=(clean.split('/').pop()||'Online Resource').replace(/[-_]+/g,' ').replace(/\.(pdf|epub|html?)$/i,'');
+      parts=[file||'Online Resource','',url,''];
+    }
+    if(parts.length>=2){
+      const [name,description='',link='',image='']=parts;
+      if(!name) return;
+      target.push({id:Date.now().toString()+Math.random().toString(36).slice(2),name,description,image:image||'https://placehold.co/600x400/1E1F29/9B87F5?text=EduSource',link:link||'#'});
+      added++;
+    }
+  });
+  save(d);
+  document.getElementById('pasteBox').value='';
+  msg.textContent=added?`${added} resource(s) added successfully.`:'Could not read the pasted format.';
+  render();
+};
+
+document.getElementById('search').oninput=render;
+document.getElementById('resetBtn').onclick=()=>{if(confirm('Reset the library to default resources?')){localStorage.removeItem('edusource_textbooks');localStorage.removeItem('edusource_manuals');render()}};
+render();
+</script>
+</body></html>

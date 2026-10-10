@@ -1,0 +1,30 @@
+/* EduSource UI layer */
+:root{--es-bg:#08090d;--es-panel:#11131b;--es-purple:#8b5cf6;--es-indigo:#6366f1;--es-text:#f5f3ff;--es-muted:#9699a8}
+*{box-sizing:border-box}
+body{background:radial-gradient(circle at 15% 0%,rgba(124,58,237,.14),transparent 30%),radial-gradient(circle at 85% 15%,rgba(79,70,229,.10),transparent 28%),#08090d!important;color:var(--es-text);overflow-x:hidden}
+nav{box-shadow:0 8px 35px rgba(0,0,0,.22)}
+.nav-link{position:relative!important;padding:8px 2px!important;transition:.25s!important}
+.nav-link:after{content:"";position:absolute;left:0;right:100%;bottom:0;height:2px;border-radius:99px;background:linear-gradient(90deg,#8b5cf6,#6366f1);transition:.25s}
+.nav-link:hover:after{right:0}.nav-link:hover{color:#c4b5fd!important}
+.card-hover{background:linear-gradient(145deg,rgba(20,22,32,.96),rgba(12,14,20,.96));border:1px solid rgba(255,255,255,.07);box-shadow:0 15px 40px rgba(0,0,0,.18)}
+.card-hover:hover{border-color:rgba(139,92,246,.45);box-shadow:0 24px 55px rgba(76,29,149,.22);transform:translateY(-6px)}
+section{scroll-margin-top:90px}
+.page-loader{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#08090d;opacity:0;visibility:hidden;pointer-events:none;transition:.35s ease}.page-loader.show{opacity:1;visibility:visible;pointer-events:auto}
+.loader-orb{width:68px;height:68px;border-radius:22px;display:grid;place-items:center;font-size:25px;background:linear-gradient(135deg,#8b5cf6,#4f46e5);box-shadow:0 0 45px rgba(139,92,246,.45);animation:loaderPulse 1.4s infinite}.loader-title{font-size:25px;font-weight:800;margin-top:18px}.loader-title span{color:#a78bfa}.loader-bar{width:180px;height:3px;background:#20222c;border-radius:99px;margin-top:18px;overflow:hidden}.loader-bar span{display:block;width:45%;height:100%;background:linear-gradient(90deg,#8b5cf6,#6366f1);animation:loaderMove 1s infinite}.page-loader p{font-size:12px;color:#777b8c;margin-top:12px}
+.mobile-taskbar{display:none}
+@keyframes loaderPulse{50%{transform:scale(1.08);box-shadow:0 0 65px rgba(139,92,246,.6)}}@keyframes loaderMove{0%{transform:translateX(-100%)}100%{transform:translateX(430%)}}
+@media(max-width:767px){
+  body{padding-bottom:82px!important}
+  nav .max-w-7xl{padding:12px 16px!important}
+  nav .hidden.md\:flex{display:none!important}
+  #authButtonsContainer{display:none!important}
+  .mobile-taskbar{position:fixed;display:flex;left:12px;right:12px;bottom:12px;z-index:5000;padding:7px;background:rgba(17,19,27,.88);border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(18px);border-radius:20px;box-shadow:0 15px 40px rgba(0,0,0,.45);justify-content:space-around}
+  .task-item{border:0;background:transparent;color:#85899a;text-decoration:none;display:flex;flex:1;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:14px;font-size:10px;font-weight:600}.task-item i{font-size:17px}.task-item.active,.task-item:hover{color:#c4b5fd;background:rgba(139,92,246,.13)}
+  .hero-title-single{font-size:2.25rem!important;white-space:normal!important}.hero-title-single br{display:none}
+}
+
+/* Global resource search */
+.search-shell{position:relative;z-index:20}
+.global-search{box-shadow:0 12px 40px rgba(0,0,0,.18)}
+.global-search::placeholder{color:#6b7280}
+.global-search:focus{background:rgba(255,255,255,.07)}
